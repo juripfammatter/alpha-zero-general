@@ -12,7 +12,7 @@ from NeuralNet import NeuralNet
 import torch
 import torch.optim as optim
 
-from .OthelloNNet import OthelloNNet as onnet
+from .Connect4NNet import Connect4NNet as onnet
 
 args = dotdict({
     'lr': 0.001,
@@ -20,7 +20,7 @@ args = dotdict({
     'epochs': 10,
     'batch_size': 64,
     'cuda': torch.cuda.is_available(),
-    'mps': torch.backends.mps.is_available(),
+    'mps': False,  # torch.backends.mps.is_available(),
     'num_channels': 512,
 })
 
@@ -36,6 +36,7 @@ class NNetWrapper(NeuralNet):
             self.nnet.cuda()
         elif args.mps:
             torch.set_default_device(torch.device("mps"))  # this is only a hotfix
+            self.nnet.to(torch.device("mps"))
 
     def train(self, examples):
         """
@@ -88,7 +89,10 @@ class NNetWrapper(NeuralNet):
 
         # preparing input
         board = torch.FloatTensor(board.astype(np.float64))
-        if args.cuda: board = board.contiguous().cuda()
+        if args.cuda:
+            board = board.contiguous().cuda()
+        elif args.mps:
+            board = board.contiguous().to(torch.device("mps"))
         board = board.view(1, self.board_x, self.board_y)
         self.nnet.eval()
         with torch.no_grad():

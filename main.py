@@ -1,10 +1,14 @@
 import logging
 
 import coloredlogs
+import torch
 
 from Coach import Coach
-from othello.OthelloGame import OthelloGame as Game
-from othello.pytorch.NNet import NNetWrapper as nn
+# from othello.OthelloGame import OthelloGame as Game
+# from othello.pytorch.NNet import NNetWrapper as nn
+
+from connect4.Connect4Game import Connect4Game as Game
+from connect4.pytorch.NNet import NNetWrapper as nn
 from utils import *
 
 log = logging.getLogger(__name__)
@@ -21,7 +25,7 @@ args = dotdict({
     'arenaCompare': 40,         # Number of games to play during arena play to determine if new net will be accepted.
     'cpuct': 1,
 
-    'checkpoint': './temp/',
+    'checkpoint': './temp/connect4/',
     'load_model': False,
     'load_folder_file': ('/dev/models/8x100x50','best.pth.tar'),
     'numItersForTrainExamplesHistory': 20,
@@ -49,7 +53,7 @@ def main():
         log.info("Loading 'trainExamples' from file...")
         c.loadTrainExamples()
 
-    log.info('Starting the learning process 🎉')
+    log.info(f'Starting the learning process on device {torch.get_default_device()}')
     c.learn()
 
 
