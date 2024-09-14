@@ -6,6 +6,11 @@ from Game import Game
 from .Connect4Logic import Board
 
 
+def print_array(arr):
+    str_arr = np.where(arr == -1, 'O', np.where(arr == 0, '.', 'X'))
+    for row in str_arr:
+        print(' '.join(row))
+
 class Connect4Game(Game):
     """
     Connect4 Game class implementing the alpha-zero-general Game interface.
@@ -63,8 +68,8 @@ class Connect4Game(Game):
         return board.tostring()
 
     @staticmethod
-    def display(board):
+    def display( board):
         print(" -----------------------")
         print(' '.join(map(str, range(len(board[0])))))
-        print(board)
+        print_array(board)
         print(" -----------------------")
